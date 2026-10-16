@@ -1,0 +1,17 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          xcrun -sdk iphoneos clang -arch arm64 -dynamiclib -fobjc-arc \
+            -miphoneos-version-min=14.0 \
+            -framework Foundation -framework Network \
+            -install_name @rpath/NetBlock.dylib \
+            -o NetBlock.dylib netblock.m fishhook.c
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NetBlock
+          path: NetBlock.dylib
